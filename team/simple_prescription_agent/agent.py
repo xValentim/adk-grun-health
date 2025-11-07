@@ -18,5 +18,5 @@ root_agent = Agent(
     """,
     # tools=[google_search],
     output_schema=CriticalityOutput,
-    output_key="results_search",
+    output_key="results_criticality",
 )
