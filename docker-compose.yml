@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Serviço ADK API Server
+  adk-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.adk
+    container_name: adk-api-server
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./team:/app/agent
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    working_dir: /app/agent
+    command: adk api_server --host 0.0.0.0
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  # Serviço MCP Server
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    container_name: mcp-server
+    ports:  
+      - "8001:8001"
+    volumes:
+      - ./mcp-server:/app
+    environment:
+      - ADK_API_URL=http://adk-api:8000
+    working_dir: /app
+    command: python server.py
+    restart: unless-stopped
+    depends_on:
+      - adk-api
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

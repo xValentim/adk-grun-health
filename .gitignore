@@ -1,0 +1,10 @@
+.env
+__pycache__/
+.venv/
+*.db
+env/
+1-basic-agent
+2-tool-agent
+10-sequential-agent
+.dist/
+rascunho/
