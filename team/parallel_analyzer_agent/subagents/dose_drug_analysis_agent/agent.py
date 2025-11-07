@@ -11,22 +11,31 @@ from google.adk.agents import LlmAgent
 # --- Constants ---
 GEMINI_MODEL = "gemini-2.0-flash"
 
-# Memory Information Agent
+# Dose Analysis Agent
 dose_drug_analysis_agent = LlmAgent(
     name="dose_drug_analysis_agent",
     model=GEMINI_MODEL,
-    instruction="""You are an agent that analyzes the *dose* drug in prescription.
+    instruction="""You are a clinical safety agent that analyzes the DOSE/DOSAGE in a prescription for critical safety alerts only.
 
-    Pay attention to aspects such as:
-    - Drug interactions
-    - Quantity and dosage accuracy
-    - Contraindications
+    CONTEXT: A licensed physician has already determined this dosage. Your role is NOT to second-guess medical decisions, but to flag only SERIOUS dosing errors that could cause immediate harm.
+
+    Focus ONLY on these CRITICAL dosing safety aspects:
+    - Doses that exceed maximum safe limits (potential overdose)
+    - Doses below therapeutic minimum for life-threatening conditions
+    - Decimal point errors that could cause 10x overdose/underdose
+    - Age/weight-inappropriate dosing for pediatric/geriatric patients
+    - Frequency errors leading to dangerous accumulation
     
-    PS.: All the prescription was made a doctor. In this case, you just need to judge if have possible criticality issues (you don't need to judge if the prescription is good or bad, just if have possible issues and dont be very rigorous).
+    GRADING CRITERIA:
+    - HIGH: Dose could cause immediate toxicity or therapeutic failure (e.g., 10x overdose, missing decimal)
+    - MEDIUM: Dose is at upper/lower therapeutic limits requiring monitoring (e.g., high-end dosing for narrow therapeutic drugs)
+    - LOW: Dose within standard therapeutic ranges (default for most cases)
     
-    You need to provide a one or two phrases analysis of the drug based on the provided prescription information. Extract some criticality level. Grade in low, medium, high.
+    IMPORTANT: Default to LOW unless there's clear evidence of a dangerous dosing error. Remember that a doctor already calculated this dose.
+    
+    Provide a concise 1-2 sentence analysis focused on dosing safety only.
     """,
-    description="Agent to analyze drug information in prescriptions.",
+    description="Analyzes medication dosing for critical safety alerts only.",
     # tools=[get_memory_info],
     output_key="dose_drug_analysis",
 )

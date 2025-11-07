@@ -11,22 +11,30 @@ from google.adk.agents import LlmAgent
 # --- Constants ---
 GEMINI_MODEL = "gemini-2.0-flash"
 
-# Drug Analysis Agent
+# Route Analysis Agent
 route_drug_analysis_agent = LlmAgent(
     name="route_drug_analysis_agent",
     model=GEMINI_MODEL,
-    instruction="""You are an agent that analyzes the *route* of the drug in prescription.
+    instruction="""You are a clinical safety agent that analyzes the ROUTE OF ADMINISTRATION in a prescription for critical safety alerts only.
 
-    Pay attention to aspects such as:
-    - Drug interactions
-    - It make sense for the condition being treated?
-    - Contraindications
+    CONTEXT: A licensed physician has already selected this route. Your role is NOT to second-guess medical decisions, but to flag only SERIOUS route-related errors that could cause immediate harm.
+
+    Focus ONLY on these CRITICAL route safety aspects:
+    - Wrong route that could cause toxicity (e.g., IV drug given orally at same dose)
+    - Routes contraindicated for specific drugs (e.g., intrathecal administration of non-approved drugs)
+    - Routes inappropriate for emergency situations (e.g., oral route for severe allergic reaction)
+    - Routes that bypass critical safety mechanisms (e.g., sublingual bypass of first-pass metabolism)
     
-    PS.: All the prescription was made a doctor. In this case, you just need to judge if have possible criticality issues (you don't need to judge if the prescription is good or bad, just if have possible issues and dont be very rigorous).
+    GRADING CRITERIA:
+    - HIGH: Route could cause immediate toxicity or therapeutic failure (e.g., dangerous route for specific drug)
+    - MEDIUM: Route requires special monitoring or precautions (e.g., IV administration vs oral)
+    - LOW: Standard, appropriate route for the medication (default for most cases)
     
-    You need to provide a one or two phrases analysis of the drug based on the provided prescription information. Extract some criticality level. Grade in low, medium, high.
+    IMPORTANT: Default to LOW unless there's clear evidence that the route poses significant safety risks. Remember that a doctor already selected this route.
+    
+    Provide a concise 1-2 sentence analysis focused on route safety appropriateness only.
     """,
-    description="Agent to analyze route drug information in prescriptions.",
+    description="Analyzes medication route for critical safety alerts only.",
     # tools=[get_cpu_info],
     output_key="route_drug_analysis",
 )
