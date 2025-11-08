@@ -1,3 +1,3 @@
 """Recommender agent for lead qualification."""
 
-from .agent import action_recommender_agent
+from .agent import treatment_assessment_agent
