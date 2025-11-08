@@ -3,6 +3,31 @@ from google.adk.agents import Agent
 from datetime import datetime
 from pydantic import BaseModel, Field
 
+from google.adk.tools.retrieval.vertex_ai_rag_retrieval import VertexAiRagRetrieval
+from vertexai.preview import rag
+
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+# ask_vertex_retrieval = VertexAiRagRetrieval(
+#     name='retrieve_rag_documentation',
+#     description=(
+#         'Use this tool to retrieve documentation and reference materials for the question from the RAG corpus,'
+#     ),
+#     rag_resources=[
+#         rag.RagResource(
+#             # please fill in your own rag corpus
+#             # here is a sample rag corpus for testing purpose
+#             # e.g. projects/123/locations/us-central1/ragCorpora/456
+#             rag_corpus=os.environ.get("RAG_CORPUS")
+#         )
+#     ],
+#     similarity_top_k=5,
+#     vector_distance_threshold=0.6,
+# )
+
 class CriticalityOutput(BaseModel):
     level: str = Field(..., description="Level of criticality: low, medium, high.")
     description: str = Field(..., description="Description of the criticality assessment. Include key factors influencing the decision.") #
@@ -38,6 +63,7 @@ root_agent = Agent(
     Provide a supportive, non-critical assessment that acknowledges the physician's expertise while noting any clear safety considerations.
     """,
     # tools=[google_search],
+    # tools=[ask_vertex_retrieval],
     output_schema=CriticalityOutput,
     output_key="results_criticality",
 )
