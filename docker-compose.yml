@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Serviço ADK API Server
+  # ADK API Server - must start first
   adk-api:
     build:
       context: .
@@ -16,10 +16,16 @@ services:
     working_dir: /app/agent
     command: adk api_server --host 0.0.0.0
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/list-apps"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
     networks:
       - app-network
 
-  # Serviço MCP Server
+  # MCP Server - depends on ADK being running
   mcp-server:
     build:
       context: .
@@ -35,7 +41,25 @@ services:
     command: python server.py
     restart: unless-stopped
     depends_on:
-      - adk-api
+      adk-api:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # FastAPI Health Analysis Server - depends on ADK being running
+  fastapi-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: fastapi-health-server
+    ports:
+      - "8002:8002"
+    environment:
+      - ADK_API_URL=http://adk-api:8000
+    restart: unless-stopped
+    depends_on:
+      adk-api:
+        condition: service_healthy
     networks:
       - app-network
 

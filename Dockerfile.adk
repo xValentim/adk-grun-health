@@ -1,22 +1,29 @@
-# Dockerfile para ADK API Server
+# Dockerfile for ADK API Server
 FROM python:3.10-slim
 
-# Instalar dependências do sistema
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Criar diretório de trabalho
+# Create working directory
 WORKDIR /app
 
-# Copiar requirements e instalar dependências Python
+# Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar o código do agente
+# Copy agent code
 COPY team/ ./agent/
 
-# Expor a porta do ADK
+# Set environment variables
+ENV PYTHONPATH=/app/agent
+ENV GOOGLE_API_KEY=${GOOGLE_API_KEY}
+
+# Expose ADK port
 EXPOSE 8000
 
-# O comando será definido no docker-compose
+# Command to start ADK API Server
+WORKDIR /app/agent
+CMD ["adk", "api_server", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,17 +1,26 @@
-# Dockerfile para MCP Server
+# Dockerfile for MCP Server
 FROM python:3.10-slim
 
-# Criar diretório de trabalho
+# Install system dependencies if needed
+RUN apt-get update && apt-get install -y \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create working directory
 WORKDIR /app
 
-# Copiar requirements e instalar dependências Python
+# Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar o código do MCP server
+# Copy MCP server code
 COPY mcp-server/ .
 
-# Expor a porta do MCP
+# Set environment variables
+ENV ADK_API_URL=${ADK_API_URL}
+ENV PYTHONPATH=/app
+
+# Expose MCP port
 EXPOSE 8001
 
-# O comando será definido no docker-compose
+# Command to start MCP Server
+CMD ["python", "server.py"]
