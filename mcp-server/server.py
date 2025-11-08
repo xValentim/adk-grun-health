@@ -64,28 +64,9 @@ def get_all_sessions(agent_name: str, user_id: str = "u_test") -> list:
     )
     return response.json()
     
-mcp = FastMCP(name="MyServer")
+mcp = FastMCP(name="HelpSUSServer")
 
 @mcp.tool()
-def add(a: int, b: int) -> int:
-    """Adds two numbers."""
-    return a + b
-
-@mcp.tool()
-def pizza_salami_price() -> str:
-    """Returns that Pizza Salami at Bella Vista costs 10€."""
-    return "Pizza Salami at Bella Vista costs 10€."
-
-@mcp.tool()
-def current_year() -> int:
-    """Returns the current year."""
-    return datetime.now().year
-
-@mcp.tool()
-def greet(name: str) -> str:
-    """Greets a person with their name."""
-    return f"Hello, {name}!"
-
 def get_all_apps():
     """
     Recupera a lista de todos os aplicativos disponíveis na API ADK.
@@ -134,28 +115,6 @@ def sequential_health_analysis(health_data: str) -> dict:
         dict - Dictionary with treatment duration criticality, patient compliance risk, lifestyle impact, monitoring frequency, executive summary, and actionable recommendations.
     """
     return run_agent("sequential_analyzer_agent", health_data)
-
-@mcp.tool()
-def qualify_essay(essay_text: str) -> dict:
-    """
-    Qualifica uma redação e retorna apenas o essencial. Essa análise é feita para ajudar um aluno a melhorar sua redação.
-    Arguments:
-        essay_text: str - Texto da redação a ser analisada.
-    Outputs:
-        dict - Dicionário com análise de conteúdo, análise estrutural e relatório sintetizado.
-    """
-    return qualify_essay_without_session(essay_text)    
-
-@mcp.tool()
-def search_agent(query: str) -> dict:
-    """
-    Executa o agente de busca e retorna apenas o essencial. O LLM pega a query do usuário, usa uma tool de busca no google e retorna os resultados trazendo informações relevantes interpretadas pelo modelo.
-    Arguments:
-        query: str - Consulta de busca em formato de texto.
-    Outputs:
-        dict - Dicionário com os resultados da busca.
-    """
-    return search_agent_without_session(query)
 
 if __name__ == "__main__":
     # Start an HTTP server on port 8001
