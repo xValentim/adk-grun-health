@@ -116,6 +116,23 @@ def sequential_health_analysis(health_data: str) -> dict:
     """
     return run_agent("sequential_analyzer_agent", health_data)
 
+@mcp.tool()
+def compliance_health_analysis(health_data: str) -> dict:
+    """
+    Analyzes patient health data focusing on compliance-related factors. You will use this agent to route healthcare compliance inquiries.
+
+    When the user asks about SUS (Sistema Único de Saúde - Brazil), delegate to sus_compliance_client.
+    When the user asks about NHS (National Health Service - UK), delegate to nhs_compliance_client.
+
+    If unclear, ask which health system they're referring to.
+    
+    Arguments:
+        health_data: str - Patient health data and prescription information in text format.
+    Outputs:
+        dict - Dictionary containing compliance analysis results.
+    """
+    return run_agent("compliance_health_agent", health_data)
+
 if __name__ == "__main__":
     # Start an HTTP server on port 8001
     mcp.run(transport="http", host="0.0.0.0", port=8001, path="/mcp")

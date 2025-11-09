@@ -132,4 +132,5 @@ sus_agent = LlmAgent(
 root_agent = sus_agent
 # Expor via A2A com uvicorn
 
-
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+app_nhs = to_a2a(root_agent, agent_card="./compliance_agents/nhs/agent-card.json")

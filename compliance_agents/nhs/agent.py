@@ -122,5 +122,5 @@ nhs_agent = LlmAgent(
 root_agent = nhs_agent
 
 # Expor via A2A com uvicorn (comentado para usar adk api_server --a2a)
-# from google.adk.a2a.utils.agent_to_a2a import to_a2a
-# app_nhs = to_a2a(root_agent, agent_card="./compliance_agents/nhs/agent-card.json")
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+app_nhs = to_a2a(root_agent, agent_card="./compliance_agents/nhs/agent-card.json")
