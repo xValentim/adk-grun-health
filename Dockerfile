@@ -1,26 +1,31 @@
-# Dockerfile para FastAPI Health Analysis Server
+# Dockerfile for ADK API Server
 FROM python:3.10-slim
 
-# Instalar dependências do sistema
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
+    git \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Criar diretório de trabalho
+# Create working directory
 WORKDIR /app
 
-# Copiar requirements da raiz e instalar dependências Python
+# Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar o código da API
-COPY api-server/main.py .
+# Copy agent code
+COPY team/ ./agent/
 
-# Definir variáveis de ambiente
-ENV ADK_API_URL=${ADK_API_URL}
-ENV PYTHONPATH=/app
+# Set environment variables
+ENV PYTHONPATH=/app/agent
+ENV GOOGLE_API_KEY=${GOOGLE_API_KEY}
 
-# Expor a porta da FastAPI
-EXPOSE 8002
+# Expose ADK port
+EXPOSE 8000
 
-# Comando para iniciar o servidor FastAPI
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002"]
+# Command to start ADK API Server - 
+WORKDIR /app/agent
+
+# CMD ["adk", "api_server", "--host", "0.0.0.0", "--port", "8000"] # Just API server
+CMD ["adk", "web", "--host", "0.0.0.0", "--port", "8000"] 
