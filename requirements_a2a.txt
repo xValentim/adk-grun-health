@@ -1,0 +1,12 @@
+# google-adk==1.16.0
+# a2a-sdk==0.3.11
+# uvicorn==0.38.0
+# fastapi==0.103.2
+# pydantic==1.10.15
+# pydantic-settings==1.10.0
+
+
+
+google-adk==1.16.0
+a2a-sdk==0.3.11
+uvicorn==0.38.0

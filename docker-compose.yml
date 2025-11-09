@@ -45,7 +45,7 @@ services:
         condition: service_healthy
     networks:
       - app-network
-
+  
   # FastAPI Health Analysis Server - depends on ADK being running
   fastapi-server:
     build:
@@ -62,6 +62,27 @@ services:
         condition: service_healthy
     networks:
       - app-network
+
+  a2a-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.a2a
+    container_name: a2a-server
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./a2a-server:/app
+    environment:
+      - ADK_API_URL=http://adk-api:8000
+    working_dir: /app
+    command: python app.py
+    restart: unless-stopped
+    depends_on:
+      adk-api:
+        condition: service_healthy
+    networks:
+      - app-network
+
 
 networks:
   app-network:
