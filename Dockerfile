@@ -22,5 +22,5 @@ ENV PYTHONPATH=/app
 # Expor a porta da FastAPI
 EXPOSE 8002
 
-# Comando para iniciar o servidor FastAPI
+# Comando para iniciar o servidor FastAPI -
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002"]
