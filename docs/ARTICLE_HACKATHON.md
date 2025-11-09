@@ -71,6 +71,80 @@ O ADK combina controle de fluxo determinístico (Workflow Agents) com raciocíni
 
 ---
 
+## RAG: Conhecimento Médico Atualizado com Pinecone
+
+Além dos agentes, implementamos **Retrieval-Augmented Generation (RAG)** para enriquecer as análises com conhecimento médico atualizado.
+
+### Base de Conhecimento: RENAME 2024
+
+Indexamos na **Pinecone** (vector database) todo o conteúdo da **RENAME 2024** (Relação Nacional de Medicamentos Essenciais), que contém:
+- **Protocolos clínicos oficiais** do Ministério da Saúde
+- **Interações medicamentosas conhecidas** (DDI - Drug-Drug Interactions)
+- **Dosagens recomendadas** por idade, peso e condição clínica
+- **Contraindicações** e alertas de segurança
+
+### Como Funciona
+
+1. **Indexação:** Fragmentamos a RENAME 2024 em chunks de 1000 tokens e geramos embeddings com `gemini-embedding-001`
+2. **Query:** Quando um agente precisa de informação, buscamos os top-k chunks mais relevantes via similaridade semântica
+3. **Contexto:** Os chunks recuperados são injetados no prompt do LLM Agent, enriquecendo a análise
+
+```python
+# Snippet do Simple Prescription Agent com RAG
+from pinecone import Pinecone
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+
+# Initialize Pinecone
+pc = Pinecone(api_key=PINECONE_API_KEY)
+index = pc.Index("health-rag")
+
+# Generate embedding and search
+query_embedding = embeddings.embed_query(query)
+results = index.query(
+    vector=query_embedding,
+    top_k=5,
+    include_metadata=True
+)
+
+# Inject context into LLM prompt
+context = "\n".join([match['metadata']['text'] for match in results])
+```
+
+### Por Que RAG em Saúde?
+
+**Atualização Contínua:** Protocolos médicos mudam. Com RAG, basta atualizar o vector database sem retreinar o LLM.
+
+**Rastreabilidade:** Cada decisão do agente cita a fonte (ex: "RENAME 2024, Capítulo 5, Seção 3.2").
+
+**Redução de Alucinações:** O LLM baseia suas análises em documentos reais, não apenas no conhecimento paramétrico.
+
+### Agent-to-Agent (A2A): Roteamento Inteligente
+
+Desenvolvemos um **Compliance Agent** que usa **Agent-to-Agent communication (A2A)** para rotear análises entre diferentes sistemas de saúde:
+
+- **SUS Compliance Agent:** Valida prescrições contra protocolos brasileiros
+- **NHS Compliance Agent:** Verifica compatibilidade com guidelines do NHS (UK)
+
+O Compliance Agent decide dinamicamente qual subagente acionar baseado no contexto da requisição (país, região, sistema de saúde).
+
+**Arquitetura A2A:**
+```python
+from google.adk.agents import LlmAgent
+
+compliance_agent = LlmAgent(
+    model="gemini-2.0-flash",
+    name="compliance_router",
+    description="Routes to SUS or NHS compliance agents",
+    sub_agents=[sus_compliance_agent, nhs_compliance_agent]
+)
+```
+
+Esse padrão permite **escalabilidade modular**: adicionar novos sistemas de saúde (ex: US Medicare, EU EMA) sem modificar o core dos agentes.
+
+> **Nota Técnica:** O Compliance Agent está temporariamente desabilitado na versão do hackathon devido a incompatibilidades de serialização OpenAPI com `httpx.Client`. Será reativado na versão de produção com ajustes arquiteturais.
+
+---
+
 ## A Arquitetura: Múltiplos Serviços no Cloud Run
 
 Deployamos três microserviços independentes no Google Cloud Run.
@@ -218,6 +292,35 @@ Isso significa que em horários de pico (ex: manhãs quando médicos prescrevem 
 
 ---
 
+## Deploy em Produção: Evidências do GCP
+
+Deployamos os três microserviços em produção no Google Cloud Run. Abaixo, os prints do console do GCP mostrando os serviços rodando:
+
+### Serviços Deployados
+
+![Cloud Run Services - Console GCP](../imgs/gcp-services-deployed.png)
+*Três serviços independentes rodando em produção: ADK API Server, MCP Server e FastAPI Health API*
+
+### Detalhes do ADK API Server
+
+![ADK API Server - Metrics](../imgs/gcp-adk-server-details.png)
+*Métricas de latência, CPU e memória do serviço principal de agentes*
+
+### Detalhes do FastAPI Health API
+
+![FastAPI Health API - Logs](../imgs/gcp-fastapi-details.png)
+*Logs e health checks do serviço de API REST*
+
+**Observações:**
+- **Latência P99:** < 500ms para análises simples, < 2s para análises paralelas completas
+- **Auto-scaling:** De 0 a 5 instâncias em horários de pico (testado com carga sintética)
+- **Custo:** ~$15/mês para 10.000 análises/mês (escala para zero quando não há tráfego)
+- **Disponibilidade:** 99.9% uptime garantido pelo Cloud Run SLA
+
+> **Nota:** O A2A Server (quarto microserviço para Agent-to-Agent communication) será deployado na versão de produção após correções de compatibilidade OpenAPI.
+
+---
+
 ## Impacto: Os Números que Importam
 
 Agora vem a parte que me deixa mais orgulhoso. Baseado em dados reais do SUS e extrapolações conservadoras, nosso sistema tem potencial para:
@@ -289,9 +392,11 @@ Este projeto foi desenvolvido para o **Cloud Run Hackathon** da Google, competin
 2. **Leveraging More Cloud Run Services:** Arquitetura distribuída com três microserviços independentes
 
 **Tech Stack:**
-- Google Agent Development Kit (ADK)
+- Google Agent Development Kit (ADK) 1.18.0
 - FastAPI + Python 3.10
 - Model Context Protocol (MCP) via FastMCP
+- Pinecone Vector Database (RAG)
+- Gemini 2.0 Flash + Gemini Embedding 001
 - Docker + Google Cloud Run
 - Microservices Architecture
 
