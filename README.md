@@ -78,11 +78,11 @@ graph TB
     end
     
     subgraph "Protocol Layer"  
-        MCP[MCP Server<br/>Port 8001<br/>FastMCP]
+        MCP[MCP Server<br/>Port 8001<br/>FastMCP<br/>Agent-as-a-Tool]
     end
     
     subgraph "AI Agent Layer"
-        ADK[ADK API Server<br/>Port 8000<br/>Google ADK]
+        ADK[ADK API Server<br/>Port 8000<br/>Google ADK<br/>]
     end
     
     subgraph "Agent Types"
