@@ -1,0 +1,26 @@
+{
+  "capabilities": {},
+  "defaultInputModes": [
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "application/json"
+  ],
+  "description": "An agent specialized in evaluating prescriptions in the context of UK's NHS (National Health Service). It verifies alignment with NICE guidelines, BNF, and NHS safety practices.",
+  "name": "nhs_compliance_agent",
+  "protocolVersion": "0.3.0",
+  "skills": [
+    {
+      "description": "Analyze prescriptions for NHS compliance and safety",
+      "id": "nhs_compliance_checking",
+      "name": "NHS Compliance Checking",
+      "tags": [
+        "healthcare",
+        "compliance",
+        "prescription"
+      ]
+    }
+  ],
+  "url": "http://127.0.0.1:8080/a2a/nhs",
+  "version": "1.0.0"
+}

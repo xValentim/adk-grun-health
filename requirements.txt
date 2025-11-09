@@ -1,3 +1,6 @@
+langchain-google-genai==3.0.1
+pinecone==7.3.0
+a2a-sdk==0.3.11
 absolufy-imports==0.3.1
 aiohappyeyeballs==2.6.1
 aiohttp==3.13.1
@@ -191,3 +194,4 @@ yarl==1.22.0
 yfinance==0.2.56
 zipp==3.23.0
 zstandard==0.25.0
+google-adk[a2a]
