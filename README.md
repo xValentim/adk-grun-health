@@ -68,7 +68,7 @@ In the above diagram, we can see how patient data and prescriptions flow through
 
 So, you can easily access the healthcare data and processing services through a robust and scalable architecture, for LLM Clients and Healthcare Dashboards. Lets look at the details:
 
-[architecture documentation](imgs/full_architecture.png) 
+![architecture documentation](imgs/full_architecture.png) 
 
 ### Deployment Infrastructure
 - **Google Cloud Run** for scalable containerization
