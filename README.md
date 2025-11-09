@@ -191,6 +191,14 @@ Our compliance agents utilize Google ADK's **Agent-to-Agent (A2A)** communicatio
 - **Guidelines Integration**: Real-time alignment with NHS protocols and best practices
 - **Output Schema**: Compliance evaluation with NICE/BNF references and UK-specific recommendations
 
+#### **Why NHS as Second System?**
+
+We chose the **UK's National Health Service (NHS)** as our second compliance agent for three strategic reasons:
+
+1. **Similar Public Healthcare Model**: Like SUS, the NHS is a universal, publicly funded healthcare system serving an entire nation, making it an ideal parallel for validation
+2. **Excellent Documentation**: NICE guidelines and the British National Formulary (BNF) are exceptionally well-documented, structured, and publicly available.
+3. **Proof of Concept for Global Expansion**: Demonstrates our A2A architecture's ability to support multiple jurisdictions with different regulatory frameworks.
+
 #### **Remote Deployment Benefits**
 ```mermaid
 graph TD
