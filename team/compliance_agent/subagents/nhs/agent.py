@@ -11,7 +11,7 @@ nhs_compliance_client= RemoteA2aAgent(
     name="nhs_compliance_client",
     description="Client agent que encaminha análise para o NHSComplianceAgent remoto via A2A.",
     agent_card=(
-        f"http://localhost:9001/a2a/nhs{AGENT_CARD_WELL_KNOWN_PATH}"
+        f"http://localhost:8080/a2a/nhs{AGENT_CARD_WELL_KNOWN_PATH}"
     ),
 )
 

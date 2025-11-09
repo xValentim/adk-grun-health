@@ -122,13 +122,14 @@ Não inclua texto fora do JSON.
 """
 
 # Agente SUS em si
-root_agent = LlmAgent(
+sus_agent = LlmAgent(
     name="sus_compliance_agent",
+    model="gemini-2.0-flash",
     instruction=SYSTEM_INSTRUCTIONS_SUS,
     output_schema=SusComplianceResponse,
 )
 
+root_agent = sus_agent
+# Expor via A2A com uvicorn
 
-# Expor via A2A
-app_sus = to_a2a(root_agent, port=9001, agent_card="./compliance_agents/sus/agent-card.json")
 

@@ -1,7 +1,7 @@
 from typing import List, Literal
 from pydantic import BaseModel, Field
 from google.adk.agents import LlmAgent
-from google.adk.a2a.utils.agent_to_a2a import to_a2a
+# from google.adk.a2a.utils.agent_to_a2a import to_a2a
 
 
 class NhsComplianceIssue(BaseModel):
@@ -112,11 +112,15 @@ Não inclua texto fora do JSON.
 """
 
 
-root_agent = LlmAgent(
+nhs_agent = LlmAgent(
     name="nhs_compliance_agent",
+    model="gemini-2.0-flash",
     instruction=SYSTEM_INSTRUCTIONS_NHS,
     output_schema=NhsComplianceResponse,
 )
 
+root_agent = nhs_agent
 
-app_nhs = to_a2a(root_agent, agent_card="./compliance_agents/nhs/agent-card.json")
+# Expor via A2A com uvicorn (comentado para usar adk api_server --a2a)
+# from google.adk.a2a.utils.agent_to_a2a import to_a2a
+# app_nhs = to_a2a(root_agent, agent_card="./compliance_agents/nhs/agent-card.json")

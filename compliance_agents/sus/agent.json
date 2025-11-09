@@ -1,0 +1,26 @@
+{
+  "capabilities": {},
+  "defaultInputModes": [
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "application/json"
+  ],
+  "description": "An agent specialized in evaluating prescriptions in the context of Brazil's SUS (Sistema Único de Saúde). It analyzes prescriptions for safety, compliance with guidelines, and identifies potential issues.",
+  "name": "sus_compliance_agent",
+  "protocolVersion": "0.3.0",
+  "skills": [
+    {
+      "description": "Analyze prescriptions for SUS compliance and safety",
+      "id": "sus_compliance_checking",
+      "name": "SUS Compliance Checking",
+      "tags": [
+        "healthcare",
+        "compliance",
+        "prescription"
+      ]
+    }
+  ],
+  "url": "http://127.0.0.1:8080/a2a/sus",
+  "version": "1.0.0"
+}
