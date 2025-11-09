@@ -11,7 +11,7 @@ sus_compliance_client= RemoteA2aAgent(
     name="sus_compliance_client",
     description="Client agent que encaminha análise para o SUSComplianceAgent remoto via A2A.",
     agent_card=(
-        f"http://localhost:8003/a2a/sus{AGENT_CARD_WELL_KNOWN_PATH}"
+        f"https://a2a-server-health-894271896157.europe-west1.run.app/a2a/sus{AGENT_CARD_WELL_KNOWN_PATH}"
     ),
 )
 
