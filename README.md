@@ -37,7 +37,7 @@ Our system deploys three intelligent analysis layers:
 
 ```mermaid
 graph TD
-    A[Patient Data + Prescription] --> B[ADK API Server]
+    A[Patient Data + Prescription] -->  B[ADK API Server]
     B --> C[Simple Prescription Agent]
     B --> D[Parallel Analyzer Agent]  
     B --> E[Sequential Health Agent]
@@ -45,18 +45,30 @@ graph TD
     D --> F[Drug Analysis]
     D --> G[Dose Analysis] 
     D --> H[Route Analysis]
-    D --> I[Synthesizer]
+
+    F --> I[Synthesizer]
+    G --> I
+    H --> I
     
     E --> J[General Health Assessment]
-    E --> K[Treatment Impact Analysis]
-    E --> L[Health Report Synthesis]
+    J --> K[Treatment Impact Analysis]
+    K --> L[Health Report Synthesis]
     
-    C --> M[MCP Server]
-    I --> M
-    L --> M
-    M --> N[FastAPI Health API]
-    N --> O[Healthcare Dashboard]
+    C --> O[Healthcare Dashboard]
+    I --> O
+    L --> O
 ```
+
+## Abstracted Architecture Diagram
+
+In the above diagram, we can see how patient data and prescriptions flow through the ADK API Server to various specialized agents for analysis, culminating in a comprehensive report delivered to the healthcare dashboard. But we additionally have underlying infrastructure components that ensure smooth operation:
+
+- **FastAPI Health API** for RESTful endpoints
+- **MCP Server** for protocol communication
+
+So, you can easily access the healthcare data and processing services through a robust and scalable architecture, for LLM Clients and Healthcare Dashboards. Lets look at the details:
+
+[architecture documentation](imgs/full_architecture.png) 
 
 ### Deployment Infrastructure
 - **Google Cloud Run** for scalable containerization
