@@ -6,6 +6,8 @@ An intelligent health analysis platform leveraging Google's Agent Development Ki
 
 ## 🎯 Impact for SUS
 
+> SUS - Sistema Único de Saúde - is Brazil's publicly funded healthcare system, serving over 200 million people nationwide. However, medication errors and adverse drug reactions remain significant challenges, leading to preventable harm and increased healthcare costs.
+
 ### The Problem
 - **1 in 8 patients** in Brazil's public healthcare network receive interacting drug combinations
 - **1 in 25 patients** receive high-risk drug interactions that could lead to serious adverse events
@@ -13,6 +15,10 @@ An intelligent health analysis platform leveraging Google's Agent Development Ki
 - Global medication error costs: **~$42 billion USD annually**
 
 *Source: Longitudinal analysis of 18-month EHR data from Blumenau (SC), Brazil*
+
+In an ideal scenario, every prescription would be carefully reviewed by a pharmacist who, with full access to the patient’s medical record, could detect and correct potential conflicts before they occur.
+However, in the reality of Brazil’s public healthcare system—marked by scale, time constraints, and workforce shortages—this layer of safety is often lost.
+Our platform bridges that gap, enabling intelligent, automated oversight at national scale.
 
 ### Our Solution Impact
 
@@ -70,6 +76,8 @@ So, you can easily access the healthcare data and processing services through a 
 
 ![architecture documentation](imgs/full_architecture.png) 
 
+> Each containerized service runs independently, allowing for scalability and maintainability. Note that we have one branch for each cloud run service block in diagram. You can find more details in: `adk-server`, `mcp-server`, and `fastapi` branches.
+
 ### Deployment Infrastructure
 - **Google Cloud Run** for scalable containerization
 - **Docker Compose** for local development and testing
@@ -83,6 +91,48 @@ So, you can easily access the healthcare data and processing services through a 
 | **Simple Prescription** | Single Agent | Overall safety assessment | `overall_criticality` (low/medium/high) |
 | **Parallel Analyzer** | Parallel Multi-Agent | Drug interactions, dosing, routes | `drug_criticality`, `dose_criticality`, `route_criticality` |
 | **Sequential Health** | Sequential Multi-Agent | Comprehensive health impact | Treatment duration, compliance risk, lifestyle impact, monitoring frequency |
+| **SUS Compliance** | A2A Remote Agent | Brazilian public health compliance | `overall_compliance`, `severity`, `issues`, `recommendations` |
+| **NHS Compliance** | A2A Remote Agent | UK NHS guidelines compliance | `overall_compliance`, `severity`, `issues`, `recommendations` |
+
+### Agent-to-Agent (A2A) Architecture for Critical Patient Routing
+
+Our compliance agents utilize Google ADK's **Agent-to-Agent (A2A)** communication protocol, enabling remote deployment and specialized routing for critical patient scenarios:
+
+#### **Why A2A for Compliance Agents?**
+- **Regulatory Separation**: Healthcare compliance requires isolated, jurisdiction-specific analysis
+- **Remote Expertise**: Deploy specialized agents in regions with local medical expertise
+- **Critical Routing**: Route high-risk patients to appropriate healthcare system protocols
+- **Scalable Compliance**: Independent scaling based on healthcare system demand
+
+#### **SUS Compliance Agent** 🇧🇷
+- **Purpose**: Validates prescriptions against Brazilian SUS guidelines and protocols
+- **Critical Routing**: High-risk patients automatically routed to SUS-specific safety protocols
+- **Local Context**: Considers SUS formulary availability and public health constraints
+- **Output Schema**: Structured compliance assessment with specific SUS references
+
+#### **NHS Compliance Agent** 🇬🇧  
+- **Purpose**: Evaluates adherence to NICE guidelines and British National Formulary (BNF)
+- **Critical Routing**: Routes complex cases through UK-specific clinical pathways
+- **Guidelines Integration**: Real-time alignment with NHS protocols and best practices
+- **Output Schema**: Compliance evaluation with NICE/BNF references and UK-specific recommendations
+
+#### **Remote Deployment Benefits**
+```mermaid
+graph TD
+    A[Patient Data] --> B[Primary Analysis]
+    B --> C{Risk Level?}
+    C -->|High Risk| D[A2A SUS Agent]
+    C -->|High Risk| E[A2A NHS Agent]
+    C -->|Low/Medium| F[Local Processing]
+    
+    D --> G[SUS-Specific Routing]
+    E --> H[NHS-Specific Routing]
+    
+    G --> I[Brazilian Healthcare Dashboard]
+    H --> J[UK Healthcare Dashboard]
+```
+
+This A2A architecture ensures that critical patients receive jurisdiction-appropriate analysis while maintaining system performance and regulatory compliance.
 
 ### Clinical Decision Support Features
 - **Drug-Drug Interaction (DDI) Detection**
@@ -91,6 +141,10 @@ So, you can easily access the healthcare data and processing services through a 
 - **Patient-Specific Risk Assessment**
 - **Treatment Duration Analysis**
 - **Compliance Risk Evaluation**
+- **Healthcare System Compliance (SUS/NHS)**
+- **Regulatory Guidelines Validation**
+- **Critical Patient Routing via A2A**
+- **Jurisdiction-Specific Safety Protocols**
 
 ## 🚀 Quick Start
 
@@ -121,9 +175,9 @@ docker-compose up --build
 ### Cloud Run Deployment
 ```bash
 # Deploy to Google Cloud Run
-gcloud run deploy adk-health-api --source . --region us-central1
-gcloud run deploy mcp-server --source . --dockerfile Dockerfile.mcp --region us-central1
-gcloud run deploy fastapi-health --source . --dockerfile Dockerfile.api --region us-central1
+gcloud run deploy adk-health-api --source . --dockerfile Dockerfile.adk --region europe-west1
+gcloud run deploy mcp-server --source . --dockerfile Dockerfile.mcp --region europe-west1
+gcloud run deploy fastapi-health --source . --dockerfile Dockerfile.api --region europe-west1
 ```
 
 ## 📊 API Usage
