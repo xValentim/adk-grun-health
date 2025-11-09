@@ -258,10 +258,13 @@ docker-compose up --build
 ### Cloud Run Deployment
 ```bash
 # Deploy to Google Cloud Run
-gcloud run deploy adk-health-api --source . --dockerfile Dockerfile.adk --region europe-west1
-gcloud run deploy mcp-server --source . --dockerfile Dockerfile.mcp --region europe-west1
+gcloud run deploy adk-server-health --source . --dockerfile Dockerfile.adk --region europe-west1
+gcloud run deploy a2a-server-health --source . --dockerfile Dockerfile.a2a --region europe-west1
+gcloud run deploy mcp-server-health --source . --dockerfile Dockerfile.mcp --region europe-west1
 gcloud run deploy fastapi-health --source . --dockerfile Dockerfile.api --region europe-west1
 ```
+
+Or, you can just deploy each service individually as needed using console commands in the Google Cloud Console. We just synchronized deployment using github feature of cloud run deployment, you can find more details in the respective branches: `adk-server`, `feat/a2a-server`, `mcp-server`, and `fastapi`.
 
 ## 📊 API Usage
 
