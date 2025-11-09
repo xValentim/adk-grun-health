@@ -17,16 +17,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy agent code
 COPY team/ ./agent/
 
-<<<<<<< HEAD:Dockerfile
-# Definir variáveis de ambiente
-ENV PYTHONPATH=/app/agent
-ENV GOOGLE_API_KEY=${GOOGLE_API_KEY}
-
-# Expor a porta do ADK
-EXPOSE 8000
-
-# Comando para iniciar o ADK API Server
-=======
 # Set environment variables
 ENV PYTHONPATH=/app/agent
 ENV GOOGLE_API_KEY=${GOOGLE_API_KEY}
@@ -34,7 +24,6 @@ ENV GOOGLE_API_KEY=${GOOGLE_API_KEY}
 # Expose ADK port
 EXPOSE 8000
 
-# Command to start ADK API Server
->>>>>>> a480572b9314eb7e23d9c8854a5b693243d5ac92:Dockerfile.adk
+# Command to start ADK API Server - 
 WORKDIR /app/agent
 CMD ["adk", "api_server", "--host", "0.0.0.0", "--port", "8000"]
