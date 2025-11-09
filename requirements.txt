@@ -100,7 +100,7 @@ jupyter_client==8.6.3
 jupyter_core==5.9.1
 keyring==25.6.0
 langchain-core==1.0.0
-langchain-google-genai==3.0.1
+# langchain-google-genai==3.0.1
 langchain-mcp-adapters==0.1.11
 langsmith==0.4.37
 lazy-object-proxy==1.12.0
