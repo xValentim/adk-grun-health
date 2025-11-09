@@ -7,8 +7,8 @@ from typing import Dict, Any
 from dotenv import load_dotenv
 import os
 
-# RAG dependencies
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+# RAG dependencies (usando SDKs nativos, sem LangChain)
+import google.generativeai as genai
 from pinecone import Pinecone
 
 load_dotenv()
@@ -20,19 +20,19 @@ INDEX_NAME = "health-rag"
 
 _pc = None
 _index = None
-_embeddings = None
+_genai_configured = False
 
 def _initialize_rag():
     """Initialize RAG components if not already done"""
-    global _pc, _index, _embeddings
+    global _pc, _index, _genai_configured
 
     if _pc is None:
         _pc = Pinecone(api_key=PINECONE_API_KEY)
         _index = _pc.Index(INDEX_NAME)
-        _embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/gemini-embedding-001",
-            google_api_key=GOOGLE_API_KEY
-        )
+
+    if not _genai_configured:
+        genai.configure(api_key=GOOGLE_API_KEY)
+        _genai_configured = True
 
 async def query_medical_knowledge(
     query: str,
@@ -64,10 +64,15 @@ async def query_medical_knowledge(
         top_k = min(max(1, top_k), 10)
         min_score = max(0.0, min(1.0, min_score))
 
-        # Generate embedding for query
-        query_embedding = _embeddings.embed_query(query)
+        # Generate embedding using native Google GenAI SDK (sem LangChain)
+        embedding_result = genai.embed_content(
+            model="models/gemini-embedding-001",
+            content=query,
+            task_type="retrieval_query"
+        )
+        query_embedding = embedding_result['embedding']
 
-        # Search in Pinecone
+        # Search in Pinecone using native SDK (sem LangChain)
         results = _index.query(
             vector=query_embedding,
             top_k=top_k,
