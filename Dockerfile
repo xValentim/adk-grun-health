@@ -26,4 +26,6 @@ EXPOSE 8000
 
 # Command to start ADK API Server - 
 WORKDIR /app/agent
-CMD ["adk", "api_server", "--host", "0.0.0.0", "--port", "8000"]
+
+# CMD ["adk", "api_server", "--host", "0.0.0.0", "--port", "8000"] # Just API server
+CMD ["adk", "web", "--host", "0.0.0.0", "--port", "8000"] 
