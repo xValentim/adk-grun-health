@@ -191,6 +191,28 @@ Our compliance agents utilize Google ADK's **Agent-to-Agent (A2A)** communicatio
 - **Guidelines Integration**: Real-time alignment with NHS protocols and best practices
 - **Output Schema**: Compliance evaluation with NICE/BNF references and UK-specific recommendations
 
+#### **Why NHS as Second System?**
+
+We chose the **UK's National Health Service (NHS)** as our second compliance agent for three strategic reasons:
+
+1. **Similar Public Healthcare Model**: Like SUS, the NHS is a universal, publicly funded healthcare system serving an entire nation, making it an ideal parallel for validation
+2. **Excellent Documentation**: NICE guidelines and the British National Formulary (BNF) are exceptionally well-documented, structured, and publicly available - perfect for RAG implementation
+3. **Proof of Concept for Global Expansion**: Demonstrates our A2A architecture's ability to support multiple jurisdictions with different regulatory frameworks
+
+**Future Healthcare Systems Roadmap:**
+
+Our modular A2A architecture is designed for easy expansion to other public healthcare systems:
+
+- 🇨🇦 **Canada Health System** - Provincial formularies and Health Canada protocols
+- 🇦🇺 **Medicare Australia** - PBS (Pharmaceutical Benefits Scheme) compliance
+- 🇪🇸 **Sistema Nacional de Salud (Spain)** - European medicine regulations
+- 🇫🇷 **Sécurité Sociale (France)** - ANSM and French health authority guidelines
+- 🇮🇹 **Servizio Sanitario Nazionale (Italy)** - AIFA medication protocols
+- 🇩🇪 **Gesetzliche Krankenversicherung (Germany)** - G-BA therapeutic guidelines
+- 🇦🇷 **Sistema de Salud Argentina** - Latin American protocols alignment
+
+Each new healthcare system can be added as an independent A2A agent without modifying the core architecture, demonstrating the true power of Google ADK's agent-to-agent communication.
+
 #### **Remote Deployment Benefits**
 ```mermaid
 graph TD

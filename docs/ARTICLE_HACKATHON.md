@@ -118,30 +118,95 @@ context = "\n".join([match['metadata']['text'] for match in results])
 
 **Redução de Alucinações:** O LLM baseia suas análises em documentos reais, não apenas no conhecimento paramétrico.
 
-### Agent-to-Agent (A2A): Roteamento Inteligente
+### Agent-to-Agent (A2A): Roteamento Crítico de Pacientes
 
-Desenvolvemos um **Compliance Agent** que usa **Agent-to-Agent communication (A2A)** para rotear análises entre diferentes sistemas de saúde:
+Implementamos **Agent-to-Agent communication (A2A)** para roteamento especializado de pacientes críticos entre diferentes jurisdições de saúde. Dois agentes remotos operam de forma independente:
 
-- **SUS Compliance Agent:** Valida prescrições contra protocolos brasileiros
-- **NHS Compliance Agent:** Verifica compatibilidade com guidelines do NHS (UK)
+#### **SUS Compliance Agent** 🇧🇷
+- **Propósito:** Valida prescrições contra diretrizes e protocolos do SUS brasileiro
+- **Roteamento Crítico:** Pacientes de alto risco são automaticamente roteados para protocolos de segurança específicos do SUS
+- **Contexto Local:** Considera disponibilidade no formulário do SUS e restrições de saúde pública
+- **Output:** Avaliação de conformidade estruturada com referências específicas do SUS
 
-O Compliance Agent decide dinamicamente qual subagente acionar baseado no contexto da requisição (país, região, sistema de saúde).
+#### **NHS Compliance Agent** 🇬🇧
+- **Propósito:** Avalia aderência às diretrizes NICE e British National Formulary (BNF)
+- **Roteamento Crítico:** Roteia casos complexos através de protocolos clínicos específicos do UK
+- **Integração de Guidelines:** Alinhamento em tempo real com protocolos e melhores práticas do NHS
+- **Output:** Avaliação de conformidade com referências NICE/BNF e recomendações específicas do UK
 
-**Arquitetura A2A:**
+#### **Por Que o NHS como Segundo Sistema?**
+
+Escolhemos o **National Health Service (NHS)** do Reino Unido como nosso segundo agente de conformidade por três razões estratégicas:
+
+1. **Modelo Similar de Saúde Pública**: Como o SUS, o NHS é um sistema de saúde universal e financiado publicamente que serve toda uma nação, tornando-o um paralelo ideal para validação
+2. **Excelente Documentação**: As diretrizes NICE e o British National Formulary (BNF) são excepcionalmente bem documentados, estruturados e publicamente disponíveis - perfeitos para implementação RAG
+3. **Prova de Conceito para Expansão Global**: Demonstra a capacidade da nossa arquitetura A2A de suportar múltiplas jurisdições com diferentes frameworks regulatórios
+
+**Roadmap de Futuros Sistemas de Saúde:**
+
+Nossa arquitetura A2A modular foi projetada para fácil expansão a outros sistemas de saúde públicos:
+
+- 🇨🇦 **Canada Health System** - Formulários provinciais e protocolos da Health Canada
+- 🇦🇺 **Medicare Australia** - Conformidade PBS (Pharmaceutical Benefits Scheme)
+- 🇪🇸 **Sistema Nacional de Salud (Espanha)** - Regulações europeias de medicamentos
+- 🇫🇷 **Sécurité Sociale (França)** - ANSM e diretrizes das autoridades de saúde francesas
+- 🇮🇹 **Servizio Sanitario Nazionale (Itália)** - Protocolos de medicamentos AIFA
+- 🇩🇪 **Gesetzliche Krankenversicherung (Alemanha)** - Diretrizes terapêuticas G-BA
+- 🇦🇷 **Sistema de Salud Argentina** - Alinhamento de protocolos latino-americanos
+
+Cada novo sistema de saúde pode ser adicionado como um agente A2A independente sem modificar a arquitetura core, demonstrando o verdadeiro poder da comunicação agent-to-agent do Google ADK.
+
+#### **Arquitetura de Deploy Remoto**
+
+Os agentes A2A operam como microserviços independentes, permitindo:
+
+- **Separação Regulatória:** Análise de conformidade isolada por jurisdição
+- **Expertise Remota:** Deploy de agentes especializados em regiões com expertise médica local
+- **Roteamento Crítico:** Pacientes de alto risco são direcionados aos protocolos apropriados
+- **Escalabilidade de Conformidade:** Escala independente baseada na demanda de cada sistema de saúde
+
+```mermaid
+graph TD
+    A[Dados do Paciente] --> B[Análise Primária]
+    B --> C{Nível de Risco?}
+    C -->|Alto Risco| D[A2A SUS Agent]
+    C -->|Alto Risco| E[A2A NHS Agent]
+    C -->|Baixo/Médio| F[Processamento Local]
+    
+    D --> G[Roteamento SUS]
+    E --> H[Roteamento NHS]
+    
+    G --> I[Dashboard SUS]
+    H --> J[Dashboard NHS]
+```
+
+**Por Que A2A para Conformidade?**
+
+1. **Isolamento Regulatório:** Cada jurisdição tem suas próprias leis e protocolos médicos
+2. **Expertise Local:** Agentes rodando em regiões específicas com acesso a conhecimento local
+3. **Performance:** Processamento distribuído reduz latência para análises críticas
+4. **Modularidade:** Adicionar novos sistemas (US Medicare, EU EMA) sem modificar o core
+
+**Implementação Técnica:**
 ```python
 from google.adk.agents import LlmAgent
 
-compliance_agent = LlmAgent(
+# SUS Agent (deployed in Brazil region)
+sus_compliance_agent = LlmAgent(
     model="gemini-2.0-flash",
-    name="compliance_router",
-    description="Routes to SUS or NHS compliance agents",
-    sub_agents=[sus_compliance_agent, nhs_compliance_agent]
+    name="sus_compliance",
+    description="Validates prescriptions against SUS protocols"
+)
+
+# NHS Agent (deployed in UK region)  
+nhs_compliance_agent = LlmAgent(
+    model="gemini-2.0-flash",
+    name="nhs_compliance",
+    description="Validates prescriptions against NHS/NICE guidelines"
 )
 ```
 
-Esse padrão permite **escalabilidade modular**: adicionar novos sistemas de saúde (ex: US Medicare, EU EMA) sem modificar o core dos agentes.
-
-> **Nota Técnica:** O Compliance Agent está temporariamente desabilitado na versão do hackathon devido a incompatibilidades de serialização OpenAPI com `httpx.Client`. Será reativado na versão de produção com ajustes arquiteturais.
+Essa arquitetura garante que pacientes críticos recebam análises apropriadas à sua jurisdição, mantendo performance e conformidade regulatória.
 
 ---
 
@@ -226,6 +291,8 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002"]
 
 4. **Conformidade com o Hackathon:** A categoria "Leveraging more Cloud Run Services" premia exatamente essa abordagem distribuída.
 
+> **Nota de Arquitetura:** O repositório está organizado em branches separadas para cada serviço (`adk-server`, `mcp-server`, `fastapi`), facilitando CI/CD independente e desenvolvimento paralelo por diferentes equipes.
+
 ---
 
 ## Show me the Code: O Deploy
@@ -236,19 +303,19 @@ Deployar no Google Cloud Run foi surpreendentemente simples. Com três comandos,
 # Deploy do ADK API Server (Agentes de IA)
 gcloud run deploy adk-health-api \
   --source . \
-  --region us-central1
+  --region europe-west1
 
 # Deploy do MCP Server (Model Context Protocol)
 gcloud run deploy mcp-server \
   --source . \
   --dockerfile Dockerfile.mcp \
-  --region us-central1
+  --region europe-west1
 
 # Deploy do FastAPI Health API (API REST)
 gcloud run deploy fastapi-health \
   --source . \
   --dockerfile Dockerfile.api \
-  --region us-central1
+  --region europe-west1
 ```
 
 ### A Mágica do `--dockerfile`
@@ -269,14 +336,14 @@ Cada serviço precisa saber onde encontrar os outros. Configuramos isso via vari
 gcloud run deploy mcp-server \
   --source . \
   --dockerfile Dockerfile.mcp \
-  --region us-central1 \
+  --region europe-west1 \
   --set-env-vars ADK_API_URL=https://adk-health-api-xyz.run.app
 
 # Exemplo: FastAPI precisa da chave da API do Google
 gcloud run deploy fastapi-health \
   --source . \
   --dockerfile Dockerfile.api \
-  --region us-central1 \
+  --region europe-west1 \
   --set-env-vars GOOGLE_API_KEY=${YOUR_API_KEY}
 ```
 

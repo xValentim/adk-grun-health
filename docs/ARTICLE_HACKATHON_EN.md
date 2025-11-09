@@ -111,30 +111,95 @@ context = "\n".join([match['metadata']['text'] for match in results])
 
 **Hallucination Reduction:** The LLM bases its analyses on real documents, not just parametric knowledge.
 
-### Agent-to-Agent (A2A): Intelligent Routing
+### Agent-to-Agent (A2A): Critical Patient Routing
 
-We developed a **Compliance Agent** that uses **Agent-to-Agent communication (A2A)** to route analyses between different healthcare systems:
+We implemented **Agent-to-Agent communication (A2A)** for specialized routing of critical patients between different healthcare jurisdictions. Two remote agents operate independently:
 
-- **SUS Compliance Agent:** Validates prescriptions against Brazilian protocols
-- **NHS Compliance Agent:** Verifies compatibility with NHS (UK) guidelines
+#### **SUS Compliance Agent** 🇧🇷
+- **Purpose:** Validates prescriptions against Brazilian SUS guidelines and protocols
+- **Critical Routing:** High-risk patients are automatically routed to SUS-specific safety protocols
+- **Local Context:** Considers SUS formulary availability and public health constraints
+- **Output:** Structured compliance assessment with specific SUS references
 
-The Compliance Agent dynamically decides which sub-agent to activate based on request context (country, region, healthcare system).
+#### **NHS Compliance Agent** 🇬🇧
+- **Purpose:** Evaluates adherence to NICE guidelines and British National Formulary (BNF)
+- **Critical Routing:** Routes complex cases through UK-specific clinical pathways
+- **Guidelines Integration:** Real-time alignment with NHS protocols and best practices
+- **Output:** Compliance evaluation with NICE/BNF references and UK-specific recommendations
 
-**A2A Architecture:**
+#### **Why NHS as Second System?**
+
+We chose the **UK's National Health Service (NHS)** as our second compliance agent for three strategic reasons:
+
+1. **Similar Public Healthcare Model**: Like SUS, the NHS is a universal, publicly funded healthcare system serving an entire nation, making it an ideal parallel for validation
+2. **Excellent Documentation**: NICE guidelines and the British National Formulary (BNF) are exceptionally well-documented, structured, and publicly available - perfect for RAG implementation
+3. **Proof of Concept for Global Expansion**: Demonstrates our A2A architecture's ability to support multiple jurisdictions with different regulatory frameworks
+
+**Future Healthcare Systems Roadmap:**
+
+Our modular A2A architecture is designed for easy expansion to other public healthcare systems:
+
+- 🇨🇦 **Canada Health System** - Provincial formularies and Health Canada protocols
+- 🇦🇺 **Medicare Australia** - PBS (Pharmaceutical Benefits Scheme) compliance
+- 🇪🇸 **Sistema Nacional de Salud (Spain)** - European medicine regulations
+- 🇫🇷 **Sécurité Sociale (France)** - ANSM and French health authority guidelines
+- 🇮🇹 **Servizio Sanitario Nazionale (Italy)** - AIFA medication protocols
+- 🇩🇪 **Gesetzliche Krankenversicherung (Germany)** - G-BA therapeutic guidelines
+- 🇦🇷 **Sistema de Salud Argentina** - Latin American protocols alignment
+
+Each new healthcare system can be added as an independent A2A agent without modifying the core architecture, demonstrating the true power of Google ADK's agent-to-agent communication.
+
+#### **Remote Deployment Architecture**
+
+A2A agents operate as independent microservices, enabling:
+
+- **Regulatory Separation:** Jurisdiction-specific compliance analysis in isolation
+- **Remote Expertise:** Deploy specialized agents in regions with local medical expertise
+- **Critical Routing:** High-risk patients directed to appropriate protocols
+- **Compliance Scalability:** Independent scaling based on healthcare system demand
+
+```mermaid
+graph TD
+    A[Patient Data] --> B[Primary Analysis]
+    B --> C{Risk Level?}
+    C -->|High Risk| D[A2A SUS Agent]
+    C -->|High Risk| E[A2A NHS Agent]
+    C -->|Low/Medium| F[Local Processing]
+    
+    D --> G[SUS Routing]
+    E --> H[NHS Routing]
+    
+    G --> I[SUS Dashboard]
+    H --> J[NHS Dashboard]
+```
+
+**Why A2A for Compliance?**
+
+1. **Regulatory Isolation:** Each jurisdiction has its own medical laws and protocols
+2. **Local Expertise:** Agents running in specific regions with access to local knowledge
+3. **Performance:** Distributed processing reduces latency for critical analyses
+4. **Modularity:** Add new systems (US Medicare, EU EMA) without modifying the core
+
+**Technical Implementation:**
 ```python
 from google.adk.agents import LlmAgent
 
-compliance_agent = LlmAgent(
+# SUS Agent (deployed in Brazil region)
+sus_compliance_agent = LlmAgent(
     model="gemini-2.0-flash",
-    name="compliance_router",
-    description="Routes to SUS or NHS compliance agents",
-    sub_agents=[sus_compliance_agent, nhs_compliance_agent]
+    name="sus_compliance",
+    description="Validates prescriptions against SUS protocols"
+)
+
+# NHS Agent (deployed in UK region)
+nhs_compliance_agent = LlmAgent(
+    model="gemini-2.0-flash",
+    name="nhs_compliance",
+    description="Validates prescriptions against NHS/NICE guidelines"
 )
 ```
 
-This pattern enables **modular scalability**: adding new healthcare systems (e.g., US Medicare, EU EMA) without modifying the agent core.
-
-> **Technical Note:** The Compliance Agent is temporarily disabled in the hackathon version due to OpenAPI serialization incompatibilities with `httpx.Client`. It will be reactivated in the production version with architectural adjustments.
+This architecture ensures critical patients receive jurisdiction-appropriate analysis while maintaining performance and regulatory compliance.
 
 ---
 
@@ -219,6 +284,8 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8002"]
 
 4. **Hackathon Compliance:** The "Leveraging more Cloud Run Services" category rewards exactly this distributed approach.
 
+> **Architecture Note:** The repository is organized into separate branches for each service (`adk-server`, `mcp-server`, `fastapi`), facilitating independent CI/CD and parallel development by different teams.
+
 ---
 
 ## Show me the Code: The Deploy
@@ -229,19 +296,19 @@ Deploying to Google Cloud Run was surprisingly simple. With three commands, we h
 # Deploy ADK API Server (AI Agents)
 gcloud run deploy adk-health-api \
   --source . \
-  --region us-central1
+  --region europe-west1
 
 # Deploy MCP Server (Model Context Protocol)
 gcloud run deploy mcp-server \
   --source . \
   --dockerfile Dockerfile.mcp \
-  --region us-central1
+  --region europe-west1
 
 # Deploy FastAPI Health API (REST API)
 gcloud run deploy fastapi-health \
   --source . \
   --dockerfile Dockerfile.api \
-  --region us-central1
+  --region europe-west1
 ```
 
 ### The `--dockerfile` Magic
@@ -262,14 +329,14 @@ Each service needs to know where to find the others. We configure this via envir
 gcloud run deploy mcp-server \
   --source . \
   --dockerfile Dockerfile.mcp \
-  --region us-central1 \
+  --region europe-west1 \
   --set-env-vars ADK_API_URL=https://adk-health-api-xyz.run.app
 
 # Example: FastAPI needs Google API key
 gcloud run deploy fastapi-health \
   --source . \
   --dockerfile Dockerfile.api \
-  --region us-central1 \
+  --region europe-west1 \
   --set-env-vars GOOGLE_API_KEY=${YOUR_API_KEY}
 ```
 
