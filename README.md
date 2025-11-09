@@ -37,7 +37,7 @@ Our system deploys three intelligent analysis layers:
 
 ```mermaid
 graph TD
-    A[Patient Data + Prescription] --> B[ADK API Server]
+    A[Patient Data + Prescription] -->  B[ADK API Server]
     B --> C[Simple Prescription Agent]
     B --> D[Parallel Analyzer Agent]  
     B --> E[Sequential Health Agent]
@@ -45,7 +45,10 @@ graph TD
     D --> F[Drug Analysis]
     D --> G[Dose Analysis] 
     D --> H[Route Analysis]
-    D --> I[Synthesizer]
+
+    F --> I[Synthesizer]
+    G --> I
+    H --> I
     
     E --> J[General Health Assessment]
     E --> K[Treatment Impact Analysis]
