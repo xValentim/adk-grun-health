@@ -194,4 +194,7 @@ yarl==1.22.0
 yfinance==0.2.56
 zipp==3.23.0
 zstandard==0.25.0
+<<<<<<< HEAD
+=======
 google-adk[a2a]
+>>>>>>> a480572b9314eb7e23d9c8854a5b693243d5ac92
