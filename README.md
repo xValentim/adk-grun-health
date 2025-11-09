@@ -35,30 +35,105 @@ An intelligent health analysis platform leveraging Google's Agent Development Ki
 
 Our system deploys three intelligent analysis layers:
 
-```mermaid
+<!-- ```mermaid
 graph TD
-    A[Patient Data + Prescription] -->  B[ADK API Server]
-    B --> C[Simple Prescription Agent]
-    B --> D[Parallel Analyzer Agent]  
-    B --> E[Sequential Health Agent]
+    A[Patient Data + Prescription] --  B[ADK API Server]
+    B -- C[Simple Prescription Agent]
+    B -- D[Parallel Analyzer Agent]  
+    B -- E[Sequential Health Agent]
     
-    D --> F[Drug Analysis]
-    D --> G[Dose Analysis] 
-    D --> H[Route Analysis]
+    D -- F[Drug Analysis]
+    D -- G[Dose Analysis] 
+    D -- H[Route Analysis]
 
-    F --> I[Synthesizer]
-    G --> I
-    H --> I
+    F -- I[Synthesizer]
+    G -- I
+    H -- I
     
-    E --> J[General Health Assessment]
-    E --> K[Treatment Impact Analysis]
-    E --> L[Health Report Synthesis]
+    E -- J[General Health Assessment]
+    E -- K[Treatment Impact Analysis]
+    E -- L[Health Report Synthesis]
     
-    C --> M[MCP Server]
-    I --> M
-    L --> M
-    M --> N[FastAPI Health API]
-    N --> O[Healthcare Dashboard]
+    C -- M[MCP Server]
+    I -- M
+    L -- M
+    M -- N[FastAPI Health API]
+    N -- O[Healthcare Dashboard]
+``` -->
+
+```mermaid
+graph TB
+    subgraph "Client Layer"
+        UI[Healthcare Dashboard]
+        API_CLIENT[API Clients]
+        LLM_CLIENT[LLM Clients]
+    end
+    
+    subgraph "API Gateway Layer"
+        FASTAPI[FastAPI Health Server<br/>Port 8002]
+    end
+    
+    subgraph "Protocol Layer"  
+        MCP[MCP Server<br/>Port 8001<br/>FastMCP]
+    end
+    
+    subgraph "AI Agent Layer"
+        ADK[ADK API Server<br/>Port 8000<br/>Google ADK]
+    end
+    
+    subgraph "Agent Types"
+        SIMPLE[Simple Prescription Agent]
+        PARALLEL[Parallel Analyzer Agent] 
+        SEQUENTIAL[Sequential Health Agent]
+        COMPLIANCE[Compliance Agent]
+    end
+    
+    subgraph "Sub-Agents"
+        DRUG[Drug Analysis Agent]
+        DOSE[Dose Analysis Agent]
+        ROUTE[Route Analysis Agent]
+        SYNTH1[Synthesizer Agent]
+        
+        GENERAL[General Health Agent]
+        TREATMENT[Treatment Assessment Agent]
+        SYNTH2[Health Report Synthesizer]
+    end
+
+    subgraph "Remote-Agents (A2A)"
+        SUS_COMPLIANCE[SUS Analysis Agent]
+        NHS_COMPLIANCE[NHS Analysis Agent]
+    end
+    
+    UI --> FASTAPI
+    API_CLIENT --> FASTAPI
+    FASTAPI --> ADK
+    LLM_CLIENT --> MCP
+    MCP --> ADK
+    
+    ADK --> SIMPLE
+    ADK --> PARALLEL
+    ADK --> SEQUENTIAL
+    ADK --> COMPLIANCE
+    
+    PARALLEL --> DRUG
+    PARALLEL --> DOSE  
+    PARALLEL --> ROUTE
+    DRUG --> SYNTH1
+    DOSE --> SYNTH1
+    ROUTE --> SYNTH1
+    
+    SEQUENTIAL --> GENERAL
+    GENERAL --> TREATMENT
+    TREATMENT --> SYNTH2
+
+    COMPLIANCE --> SUS_COMPLIANCE
+    COMPLIANCE --> NHS_COMPLIANCE
+    
+    style ADK fill:#4285f4,stroke:#333,stroke-width:2px,color:#fff
+    style MCP fill:#34a853,stroke:#333,stroke-width:2px,color:#fff
+    style FASTAPI fill:#ea4335,stroke:#333,stroke-width:2px,color:#fff
+    style SUS_COMPLIANCE fill:#fbbc05,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5,color:#000
+    style NHS_COMPLIANCE fill:#fbbc05,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5,color:#000
 ```
 
 ### Deployment Infrastructure

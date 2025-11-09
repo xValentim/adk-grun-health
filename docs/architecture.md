@@ -11,6 +11,7 @@ graph TB
     subgraph "Client Layer"
         UI[Healthcare Dashboard]
         API_CLIENT[API Clients]
+        LLM_CLIENT[LLM Clients]
     end
     
     subgraph "API Gateway Layer"
@@ -29,6 +30,7 @@ graph TB
         SIMPLE[Simple Prescription Agent]
         PARALLEL[Parallel Analyzer Agent] 
         SEQUENTIAL[Sequential Health Agent]
+        COMPLIANCE[Compliance Agent]
     end
     
     subgraph "Sub-Agents"
@@ -41,15 +43,22 @@ graph TB
         TREATMENT[Treatment Assessment Agent]
         SYNTH2[Health Report Synthesizer]
     end
+
+    subgraph "Remote-Agents (A2A)"
+        SUS_COMPLIANCE[SUS Analysis Agent]
+        NHS_COMPLIANCE[NHS Analysis Agent]
+    end
     
     UI --> FASTAPI
     API_CLIENT --> FASTAPI
-    FASTAPI --> MCP
+    FASTAPI --> ADK
+    LLM_CLIENT --> MCP
     MCP --> ADK
     
     ADK --> SIMPLE
     ADK --> PARALLEL
     ADK --> SEQUENTIAL
+    ADK --> COMPLIANCE
     
     PARALLEL --> DRUG
     PARALLEL --> DOSE  
@@ -61,10 +70,15 @@ graph TB
     SEQUENTIAL --> GENERAL
     GENERAL --> TREATMENT
     TREATMENT --> SYNTH2
+
+    COMPLIANCE --> SUS_COMPLIANCE
+    COMPLIANCE --> NHS_COMPLIANCE
     
     style ADK fill:#4285f4,stroke:#333,stroke-width:2px,color:#fff
     style MCP fill:#34a853,stroke:#333,stroke-width:2px,color:#fff
     style FASTAPI fill:#ea4335,stroke:#333,stroke-width:2px,color:#fff
+    style SUS_COMPLIANCE fill:#fbbc05,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5,color:#000
+    style NHS_COMPLIANCE fill:#fbbc05,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5,color:#000
 ```
 
 ## Component Details
