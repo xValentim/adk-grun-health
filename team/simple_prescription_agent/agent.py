@@ -154,7 +154,7 @@ root_agent = Agent(
 
     Provide a supportive, non-critical assessment that acknowledges the physician's expertise while noting any clear safety considerations.
     """,
-    # tools=[query_medical_knowledge],
+    tools=[query_medical_knowledge],
     output_schema=CriticalityOutput,
     output_key="results_criticality",
 )
