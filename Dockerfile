@@ -1,4 +1,4 @@
-# Dockerfile para MCP Server
+# Dockerfile for MCP Server
 FROM python:3.10-slim
 
 # Instalar dependências do sistema se necessário
@@ -8,11 +8,11 @@ RUN apt-get update && apt-get install -y \
 # Criar diretório de trabalho
 WORKDIR /app
 
-# Copiar requirements e instalar dependências Python
+# Copy requirements and install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar o código do MCP server
+# Copy MCP server code
 COPY mcp-server/ .
 
 # Definir variáveis de ambiente
