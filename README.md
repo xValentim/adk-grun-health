@@ -6,6 +6,8 @@ An intelligent health analysis platform leveraging Google's Agent Development Ki
 
 ## 🎯 Impact for SUS
 
+> SUS - Sistema Único de Saúde - is Brazil's publicly funded healthcare system, serving over 200 million people nationwide. However, medication errors and adverse drug reactions remain significant challenges, leading to preventable harm and increased healthcare costs.
+
 ### The Problem
 - **1 in 8 patients** in Brazil's public healthcare network receive interacting drug combinations
 - **1 in 25 patients** receive high-risk drug interactions that could lead to serious adverse events
@@ -13,6 +15,10 @@ An intelligent health analysis platform leveraging Google's Agent Development Ki
 - Global medication error costs: **~$42 billion USD annually**
 
 *Source: Longitudinal analysis of 18-month EHR data from Blumenau (SC), Brazil*
+
+In an ideal scenario, every prescription would be carefully reviewed by a pharmacist who, with full access to the patient’s medical record, could detect and correct potential conflicts before they occur.
+However, in the reality of Brazil’s public healthcare system—marked by scale, time constraints, and workforce shortages—this layer of safety is often lost.
+Our platform bridges that gap, enabling intelligent, automated oversight at national scale.
 
 ### Our Solution Impact
 
