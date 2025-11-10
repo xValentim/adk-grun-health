@@ -21,6 +21,6 @@
       ]
     }
   ],
-  "url": "http://127.0.0.1:8080/a2a/nhs",
+  "url": "https://a2a-server-health-894271896157.europe-west1.run.app/a2a/nhs",
   "version": "1.0.0"
 }
