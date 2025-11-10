@@ -6,14 +6,6 @@ The ADK Health Analysis System is built on a microservices architecture with thr
 
 ## Architecture Diagram
 
-# 🏗️ Architecture Documentation
-
-## System Overview
-
-The ADK Health Analysis System is built on a microservices architecture with three main components that work together to provide comprehensive prescription safety analysis for Brazil's public healthcare system.
-
-## Architecture Diagram
-
 ```mermaid
 graph TB
     subgraph "Client Layer"
