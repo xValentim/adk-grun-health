@@ -13,11 +13,31 @@ services:
       - ./team:/app/agent
     environment:
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
-    working_dir: /app/agent
-    command: adk api_server --host 0.0.0.0
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/list-apps"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    networks:
+      - app-network
+
+  # A2A Remote Server - for compliance agents (independent)
+  a2a-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.a2a
+    container_name: adk-a2a-server
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./compliance_agents:/app/compliance_agents
+    environment:
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8003/list-apps"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -37,8 +57,6 @@ services:
       - ./mcp-server:/app
     environment:
       - ADK_API_URL=http://adk-api:8000
-    working_dir: /app
-    command: python server.py
     restart: unless-stopped
     depends_on:
       adk-api:
