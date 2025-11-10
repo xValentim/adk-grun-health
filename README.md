@@ -340,7 +340,7 @@ Lets see cool and fast examples.
 
 ### Example 1: Connect your LLM Client to MCP and call the Parallel Analyzer Agent
 
-In this example, lets use github copilot to call the parallel analysis tool via MCP. In first step, use your MCP URL in VS Code to connect to MCP server and get the tools (Click [here](https://code.visualstudio.com/docs/copilot/customization/mcp-servers) for more details).
+In this example, we’ll use GitHub Copilot to call the Parallel Analysis Tool via MCP. To get started, simply connect your MCP server to VS Code by adding your server URL in Copilot’s Custom MCP Servers settings. Once connected, Copilot will automatically detect and list the available tools from your MCP instance, allowing you to invoke the Parallel Analysis Tool directly from your editor. For detailed setup instructions, see the official VS Code documentation [here](https://code.visualstudio.com/docs/copilot/customization/mcp-servers).
 
 After connecting, you can just send a query like:
 ```txt
@@ -490,10 +490,13 @@ Our system builds on evidence-based clinical decision support:
 ## 📚 Documentation
 
 Detailed technical documentation available in the [`docs/`](docs/) directory:
-- [Architecture Details](docs/architecture.md)
-- [Agent Development Guide](docs/agents.md)
-- [API Reference](docs/api.md)
-- [Deployment Guide](docs/deployment.md)
+- [Architecture Details](docs/architecture.md) - Learn more about how we designed the system.
+- [Cloud Run Deployment Guide](docs/cloud-run-use.md) - Here you can find the commands to deploy each service to Cloud Run.
+
+Detailed technical tutorial with all we learned using Cloud Run for this project:
+- [Cloud Run Tutorial - Directly from GitHub](docs-cloud-run-tutorial/deploy-from-repo.md) - Step-by-step guide to deploy multi-agent systems using Cloud Run directly from GitHub repositories.
+- [Cloud Run Tutorial - Directly from Artifact Registry](docs-cloud-run-tutorial/google-artifact-registry.md) - Step-by-step guide to deploy multi-agent systems using Cloud Run directly from Google Artifact Registry.
+
 
 ## 📄 License
 
